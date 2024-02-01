@@ -1,35 +1,23 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-
-interface Todo {
-  id: number;
-  title: string;
-  userId: number;
-  completed: boolean;
-}
+import useTodos from "./hooks/useTodos";
 
 const TodoList = () => {
-  const fetchTodos = () => {
-    return axios
-      .get<Todo[]>("https://jsonplaceholder.typicode.com/todos")
-      .then((res) => res.data);
-  };
-
-  const { data: todos } = useQuery<Todo[]>({
-    queryKey: ["todos"],
-    queryFn: fetchTodos,
-  });
-
-  // if (error) return <p>{error.message}</p>;
+  const { data: todos, isError, isLoading } = useTodos();
 
   return (
-    <ul className="list-group">
-      {todos?.map((todo) => (
-        <li key={todo.id} className="list-group-item">
-          {todo.title}
-        </li>
-      ))}
-    </ul>
+    <>
+      {isError && <p>Error fetching data.</p>}
+      {isLoading && <p>Loading</p>}
+
+      <ul className="list-group">
+        {todos?.map((todo) => (
+          <li key={todo.id} className="list-group-item">
+            {todo.title}
+          </li>
+        ))}
+      </ul>
+    </>
   );
 };
 
